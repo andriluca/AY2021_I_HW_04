@@ -32,7 +32,9 @@ void doInit(){
     isr_ADC_StartEx(Custom_isr_ADC);
     
     PacketReadyFlag=0;
-    channel = CHANNEL_POT;
+    channel = CHANNEL_PHOTO;
+    DataBuffer[0] = 0xA0;
+    DataBuffer[TRANSMIT_BUFFER_SIZE-1] = 0xC0;
 
 }
 
@@ -44,18 +46,17 @@ void doInit(){
  *     Storing data from the two sensors
 \*****************************************************************************/
 
-void doSample(int32 value){
+void doSample(int16 value){
     
-    // setting the analogic multiplexer channel
-    AMux_FastSelect(channel);
     // if ADC is out of bound --> resizing
     if (value < 0) value = 0;
-    if (value > 65535) value = 65535;
+    if (value > 255) value = 255;
 
     // populating the array
-    sensorData[channel]=value;
-
-    PacketReadyFlag = 0;
+    DataBuffer[channel+1] = value & 0xFF;
+    
     channel = (channel+1)%2;
-
+    // setting the analogic multiplexer channel
+    AMux_FastSelect(channel);
+    
 }

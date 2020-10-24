@@ -14,16 +14,14 @@
     #include "cytypes.h"
     
     #define CHANNEL_PHOTO   0
+    #define BYTE_PHOTO      CHANNEL_PHOTO + 1
     #define CHANNEL_POT     1
+    #define THRESHOLD_PHOTO 140
     
     void doInit();
-    void doSample(int32 value);
+    void doSample(int16 value);
 
-    
     volatile uint8 channel;
-    int32 sensorData[2];
     uint8 ch;
+    uint8 isTransmission;
 #endif
-
-
-/* [] END OF FILE */

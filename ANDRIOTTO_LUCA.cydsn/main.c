@@ -14,7 +14,6 @@
 #include "stdio.h"
 #include "sample.h"
 
-int32 value_digit;
 
 int main(void)
 {
@@ -23,11 +22,12 @@ int main(void)
 
     for(;;){
         if(PacketReadyFlag){
-            
-            for (ch = 0; ch <= CHANNEL_PHOTO; ch++) doSample(ADC_Read32());
-            
-            sprintf(DataBuffer,"%ld \t %ld\r\n",sensorData[0],sensorData[1]);
-            UART_PutString(DataBuffer);
+            for (ch = 0; ch <= CHANNEL_PHOTO; ch++) doSample(ADC_Read16());
+            UART_PutArray(DataBuffer,TRANSMIT_BUFFER_SIZE);
+            PacketReadyFlag = 0;
         }
+            
+        if(DataBuffer[BYTE_PHOTO] < THRESHOLD_PHOTO) PIN_LED_Write(1);
+        else PIN_LED_Write(0);
     }
 }
