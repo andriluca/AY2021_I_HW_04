@@ -12,42 +12,22 @@
 #include "project.h"
 #include "interrupt.h"
 #include "stdio.h"
-
-void doInit();
+#include "sample.h"
 
 int32 value_digit;
 
 int main(void)
 {
-    CyGlobalIntEnable; /* Enable global interrupts. */
 
     doInit();
 
     for(;;){
         if(PacketReadyFlag){
-            value_digit = ADC_Read32();
-            PacketReadyFlag=0;
-            if (value_digit < 0) value_digit = 0;
-            if (value_digit > 65535) value_digit = 65535;
-            sprintf(DataBuffer,"%ld\r\n",value_digit);
+            
+            for (ch = 0; ch <= CHANNEL_PHOTO; ch++) doSample(ADC_Read32());
+            
+            sprintf(DataBuffer,"%ld \t %ld\r\n",sensorData[0],sensorData[1]);
             UART_PutString(DataBuffer);
         }
     }
-}
-
-/*****************************************************************************\
- * Function:    doInit
- * Description: 
- *     Initialization of peripherals
-\*****************************************************************************/
-
-void doInit(){
-    AMux_Init();
-    AMux_FastSelect(1);
-    ADC_Start();
-    Timer_Start();
-    UART_Start();
-    isr_ADC_StartEx(Custom_isr_ADC);
-    
-    PacketReadyFlag=0;
 }
