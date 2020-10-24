@@ -10,17 +10,44 @@
  * ========================================
 */
 #include "project.h"
+#include "interrupt.h"
+#include "stdio.h"
+
+void doInit();
+
+int32 value_digit;
 
 int main(void)
 {
     CyGlobalIntEnable; /* Enable global interrupts. */
 
-    /* Place your initialization/startup code here (e.g. MyInst_Start()) */
+    doInit();
 
-    for(;;)
-    {
-        /* Place your application code here. */
+    for(;;){
+        if(PacketReadyFlag){
+            value_digit = ADC_Read32();
+            PacketReadyFlag=0;
+            if (value_digit < 0) value_digit = 0;
+            if (value_digit > 65535) value_digit = 65535;
+            sprintf(DataBuffer,"%ld\r\n",value_digit);
+            UART_PutString(DataBuffer);
+        }
     }
 }
 
-/* [] END OF FILE */
+/*****************************************************************************\
+ * Function:    doInit
+ * Description: 
+ *     Initialization of peripherals
+\*****************************************************************************/
+
+void doInit(){
+    AMux_Init();
+    AMux_FastSelect(1);
+    ADC_Start();
+    Timer_Start();
+    UART_Start();
+    isr_ADC_StartEx(Custom_isr_ADC);
+    
+    PacketReadyFlag=0;
+}
