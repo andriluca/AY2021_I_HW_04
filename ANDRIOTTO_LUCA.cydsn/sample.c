@@ -18,24 +18,28 @@
 /*****************************************************************************\
  * Function:    doInit
  * Description: 
- *     Initialization of peripherals
+ *     Initialization of peripherals and variables.
 \*****************************************************************************/
 
 void doInit(){
     
-    CyGlobalIntEnable; /* Enable global interrupts. */
+    CyGlobalIntEnable;
 
     AMux_Init();
     ADC_Start();
-    Timer_Start();
     UART_Start();
+    PWM_Start();
+    PIN_BUILTIN_LED_Write(1);
+    Timer_Start();
     isr_ADC_StartEx(Custom_isr_ADC);
+    isr_UART_StartEx(Custom_isr_UART);
     
     PacketReadyFlag=0;
     channel = CHANNEL_PHOTO;
     DataBuffer[0] = 0xA0;
     DataBuffer[TRANSMIT_BUFFER_SIZE-1] = 0xC0;
-
+    isKeyPressed = 0;
+    PIN_LED_Write(0);
 }
 
 
@@ -53,7 +57,7 @@ void doSample(int16 value){
     if (value > 255) value = 255;
 
     // populating the array
-    DataBuffer[channel+1] = value & 0xFF;
+    DataBuffer[channel+1] = value;
     
     channel = (channel+1)%2;
     // setting the analogic multiplexer channel

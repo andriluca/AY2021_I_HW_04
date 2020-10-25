@@ -1,0 +1,10 @@
+;packet structure
+;Header 0xA0
+;Tail   0xT0
+;@0 -> least significant byte
+;@1 -> most significant byte
+; NB: poi per l'esportaizone devo fare sia le variabili che questo file.
+; .iic e .ini
+
+
+rx8 [h=A0] @photo @pot [t=C0]

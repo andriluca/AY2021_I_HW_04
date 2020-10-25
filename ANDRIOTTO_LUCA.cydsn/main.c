@@ -27,7 +27,7 @@ int main(void)
             PacketReadyFlag = 0;
         }
             
-        if(DataBuffer[BYTE_PHOTO] < THRESHOLD_PHOTO) PIN_LED_Write(1);
-        else PIN_LED_Write(0);
+        if(PacketReadyFlag && DataBuffer[BYTE_PHOTO] < THRESHOLD_PHOTO) PWM_WriteCompare(DataBuffer[BYTE_POT]);
+        if(PacketReadyFlag && !(DataBuffer[BYTE_PHOTO] < THRESHOLD_PHOTO)) PWM_WriteCompare(0);
     }
 }
