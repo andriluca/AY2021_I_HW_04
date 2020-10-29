@@ -9,7 +9,6 @@
 
 void doSample(int16 value);
 
-
 /*****************************************************************************\
  * Function:    doInit
  * Description: 
@@ -97,6 +96,7 @@ void doSample(int16 value){
 
 /*****************************************************************************\
  * Function:    doSwitchPhases
+ * Input:       phase (uint8 representing an UART transmitted byte)
  * Description: 
  *     Switches the phases of start and stop sending data 
 \*****************************************************************************/
